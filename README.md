@@ -1,21 +1,21 @@
 # Heat-Klang-Valley – SDS320
 
-Exploratives Fernerkundungsprojekt zur urbanen Expansion im Elmina-Expansionskorridor im Klang Valley, Malaysia. Ziel ist, Veränderungen von Vegetation und bebauten Flächen sichtbar zu machen und anschließend deren Zusammenhang mit der Landoberflächentemperatur zu untersuchen.
+An exploratory remote sensing project investigating urban expansion along the Elmina expansion corridor in Klang Valley, Malaysia. The aim is to identify changes in vegetation and built-up areas and subsequently investigate their relationship with land surface temperature.
 
-## Aktueller Stand (6. Oktober 2026)
+## Current status (6 October 2026)
 
-Der bisherige Arbeitsstand umfasst die Auswahl eines Landsat-Vergleichspaars, einen lokalen Wolkencheck im Untersuchungsgebiet und einen openEO/STAC-Workflow zum Laden, Exportieren und Anzeigen der RGB-Aufnahmen. Eine quantitative Analyse der urbanen Expansion oder Temperatur ist noch nicht abgeschlossen.
+The work so far covers the selection of a Landsat comparison pair, a local cloud check within the study area, and an openEO/STAC workflow for loading, exporting, and displaying RGB imagery. Quantitative analyses of urban expansion and temperature have not yet been completed.
 
-| Aufnahme | Satellit | RGB-Bänder (Rot, Grün, Blau) |
+| Acquisition date | Satellite | RGB bands (red, green, blue) |
 | --- | --- | --- |
-| 31.05.2004 | Landsat 5 | `TM_B3`, `TM_B2`, `TM_B1` |
-| 17.05.2025 | Landsat 9 | `OLI_B4`, `OLI_B3`, `OLI_B2` |
+| 31 May 2004 | Landsat 5 | `TM_B3`, `TM_B2`, `TM_B1` |
+| 17 May 2025 | Landsat 9 | `OLI_B4`, `OLI_B3`, `OLI_B2` |
 
-Die Aufnahmen liegen rund 21 Jahre auseinander und stammen beide aus dem Mai. Dadurch werden saisonale Unterschiede begrenzt; Wetter- und Sensorunterschiede müssen bei weiteren Auswertungen berücksichtigt werden.
+The acquisitions are approximately 21 years apart and both fall in May. This helps limit seasonal differences; weather conditions and sensor differences still need to be considered in subsequent analyses.
 
-## Untersuchungsgebiet
+## Study area
 
-Elmina-Ausschnitt in geografischen Koordinaten (WGS84, EPSG:4326):
+Elmina subset in geographic coordinates (WGS84, EPSG:4326):
 
 ```python
 bbox_list = [101.50, 3.16, 101.54, 3.20]
@@ -27,27 +27,27 @@ bbox_stac = {
 }
 ```
 
-`bbox_list` wird für die STAC-Suche und den lokalen Wolkencheck verwendet; `bbox_stac` ist das Dictionary für `connection.load_stac(spatial_extent=...)`.
+`bbox_list` is used for the STAC search and local cloud check; `bbox_stac` is the dictionary passed to `connection.load_stac(spatial_extent=...)`.
 
-## Daten und Wolkencheck
+## Data and cloud check
 
-Datenquelle: Landsat Collection 2 Level-2 über den [Microsoft Planetary Computer STAC-Katalog](https://planetarycomputer.microsoft.com/api/stac/v1/collections/landsat-c2-l2).
+Data source: Landsat Collection 2 Level-2 through the [Microsoft Planetary Computer STAC catalogue](https://planetarycomputer.microsoft.com/api/stac/v1/collections/landsat-c2-l2).
 
-Die Auswahl beruht auf einem Wolkencheck mit `QA_PIXEL` innerhalb des Elmina-Ausschnitts. Im bisherigen Projektverlauf wurden für beide ausgewählten Aufnahmen **0,0 % Wolken im ROI** berichtet. Das unterscheidet sich vom Wolkenanteil der gesamten Landsat-Szene. Die berichteten Werte wurden für diese README nicht erneut berechnet; ihre genaue Aussage hängt von den verwendeten QA-Bits, der Behandlung ungültiger Pixel und dem Nenner der Berechnung ab.
+The selection is based on a cloud check using `QA_PIXEL` within the Elmina subset. The project workflow reported **0.0% cloud cover within the ROI** for both selected acquisitions. This differs from cloud cover across the entire Landsat scene. These reported values were not recalculated for this README; their precise interpretation depends on the QA bits used, the handling of invalid pixels, and the denominator used in the calculation.
 
-## Workflow in Jupyter
+## Jupyter workflow
 
-Benötigt werden eine Python-/Jupyter-Umgebung, ein Zugang zu einem openEO-Backend mit Unterstützung für `load_stac` und eine authentifizierte openEO-Verbindung namens `connection`. Das konkrete Backend und die Anmeldung sind im Projekt-Notebook festzuhalten.
+Requirements include a Python/Jupyter environment, access to an openEO backend supporting `load_stac`, and an authenticated openEO connection named `connection`. The specific backend and authentication procedure should be documented in the project notebook.
 
-Für den RGB-Schritt werden `openeo`, `rasterio`, `numpy` und `matplotlib` benötigt; für die STAC-Suche und den ROI-Wolkencheck können weitere Pakete erforderlich sein.
+The RGB step requires `openeo`, `rasterio`, `numpy`, and `matplotlib`; additional packages may be needed for the STAC search and ROI cloud check.
 
-1. Verbindung zum openEO-Backend herstellen und authentifizieren.
-2. Landsat-Szenen über STAC suchen und `QA_PIXEL` im ROI prüfen.
-3. Die beiden ausgewählten Aufnahmen mit demselben räumlichen Ausschnitt laden.
-4. RGB-Daten als GeoTIFF exportieren.
-5. Beide Bilder in Jupyter nebeneinander anzeigen.
+1. Connect to the openEO backend and authenticate.
+2. Search for Landsat scenes through STAC and check `QA_PIXEL` within the ROI.
+3. Load the two selected acquisitions using the same spatial extent.
+4. Export the RGB data as GeoTIFFs.
+5. Display both images side by side in Jupyter.
 
-Der zuletzt festgelegte Lade- und Exportblock lautet:
+The latest agreed loading and export block is:
 
 ```python
 landsat_url = (
@@ -75,17 +75,17 @@ old_final.execute_batch("elmina_2004_05_31_rgb.tif", out_format="GTiff")
 new_final.execute_batch("elmina_2025_05_17_rgb.tif", out_format="GTiff")
 ```
 
-Die GeoTIFF-Dateinamen sind die vorgesehenen Exportnamen; sie belegen allein keinen abgeschlossenen Download. Das Erstellen eines Data Cubes bestätigt ebenfalls noch keine erfolgreiche Ausführung auf dem Backend.
+The GeoTIFF filenames are the intended export names; they do not by themselves confirm completed downloads. Creating a data cube also does not confirm successful execution on the backend.
 
-Zur Visualisierung werden die drei RGB-Bänder mit Rasterio eingelesen und mit Matplotlib nebeneinander angezeigt. Der bisherige Ansatz verwendet einen Kontraststretch zwischen dem 2. und 98. Perzentil je Bild. Dieser dient der Darstellung; unterschiedliche Bildstreckungen erlauben keinen direkten quantitativen Vergleich von Farben oder Helligkeit.
+For visualisation, the three RGB bands are read with Rasterio and displayed side by side with Matplotlib. The current approach applies a contrast stretch between the 2nd and 98th percentiles separately for each image. This is for display purposes; separate image stretches do not support direct quantitative comparisons of colour or brightness.
 
-## Nächste Schritte
+## Next steps
 
-- RGB-Aufnahmen visuell prüfen und den ROI-Wolkencheck mit den konkreten STAC-Item-IDs dokumentieren.
-- Vegetationsveränderungen mit NDVI und/oder bebaute Flächen mit einer geeigneten Klassifikation untersuchen; dafür zusätzliche Spektralbänder laden.
-- Für quantitative Vergleiche Skalierung, NoData-Masken, räumliche Ausrichtung und Sensorunterschiede berücksichtigen.
-- Anschließend Landoberflächentemperatur mit den dafür geeigneten thermischen Produkten auswerten. RGB-Bänder allein liefern keine Temperatur.
+- Visually inspect the RGB images and document the ROI cloud check with the specific STAC item IDs.
+- Investigate vegetation changes using NDVI and/or built-up areas using an appropriate classification; load additional spectral bands for these analyses.
+- Account for scaling, NoData masks, spatial alignment, and sensor differences in quantitative comparisons.
+- Subsequently analyse land surface temperature using suitable thermal products. RGB bands alone do not provide temperature.
 
-## Reproduzierbarkeit
+## Reproducibility
 
-Diese README dokumentiert den zuletzt in der Projektbesprechung festgelegten Stand. Für eine vollständige Reproduktion gehören das aktuelle Notebook, die Backend-Konfiguration ohne Zugangsdaten, Paketversionen, STAC-Item-IDs und die ausführbare Definition des ROI-Wolkenchecks ins Repository. Zugangsdaten und Tokens dürfen nicht mit veröffentlicht werden.
+This README documents the latest status agreed during the project discussion. Full reproduction requires the current notebook, backend configuration without credentials, package versions, STAC item IDs, and an executable definition of the ROI cloud check in the repository. Credentials and tokens must not be published.

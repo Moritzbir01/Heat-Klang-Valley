@@ -79,6 +79,10 @@ The GeoTIFF filenames are the intended export names; they do not by themselves c
 
 For visualisation, the three RGB bands are read with Rasterio and displayed side by side with Matplotlib. The current approach applies a contrast stretch between the 2nd and 98th percentiles separately for each image. This is for display purposes; separate image stretches do not support direct quantitative comparisons of colour or brightness.
 
+##Calcualte NDVI 
+
+
+
 ## Next steps
 
 - Visually inspect the RGB images and document the ROI cloud check with the specific STAC item IDs.
